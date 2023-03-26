@@ -37,8 +37,8 @@ class DataCleaning:
             df['crediting_period_end_date'] = pd.to_datetime(df['crediting_period_end_date'])
 
             # Adding False for Goal columns NaN values
-            # (^Goal) means starts with `Goal`
-            df.filter(like='^Goal').fillna(False, inplace=True)
+            goal_cols = df.filter(like='Goal_').columns
+            df[goal_cols] = goal_cols.fillna(False)
 
             # Filling NaN with zero for credits
             df.VER_issued_credits.fillna(0, inplace=True)
