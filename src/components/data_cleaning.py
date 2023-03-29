@@ -24,19 +24,24 @@ class DataCleaning:
 
     def initiate_data_cleaning(self):
         logging.info("Entered the data cleaning method or component")
-        
-        try:                        
-            df = utils.read_file_with_custom_data_types(self.cleaning_config.raw_data_path)
+
+        try:
+            df = utils.read_file_with_custom_data_types(
+                self.cleaning_config.raw_data_path)
 
             # Adding False for Goal columns NaN values
             goal_cols = df.filter(like='Goal_').columns
-            df[goal_cols] = goal_cols.fillna(False)
+            df[goal_cols] = df[goal_cols].fillna(False)
 
             # Filling NaN with zero for credits
             df.VER_issued_credits.fillna(0, inplace=True)
             df.VER_retired_credits.fillna(0, inplace=True)
 
-            # Replacing typos
+            # Dropping columns
+            df.drop('status',axis=1,inplace=True)
+            df.drop('state',axis=1,inplace=True)
+
+            # Replacing categorical typos
             replace_dict = {'Micro scale': 'Micro Scale',
                             'Microscale': 'Micro Scale', 'Large scale': 'Large Scale'}
             df = df.replace({'size': replace_dict})
@@ -45,12 +50,11 @@ class DataCleaning:
             df.loc[df['VER_retired_credits'] > df['VER_issued_credits'],
                    'VER_retired_credits'] = df['VER_issued_credits']
 
-            df.to_csv(self.cleaning_config.cleaned_data_path)
+            df.to_csv(self.cleaning_config.cleaned_data_path,
+                      index=False, header=True)
 
             logging.info("Data cleaning is completed")
             print("Data cleaning is completed")
 
         except Exception as e:
             raise CustomException(e, sys)
-
-    
