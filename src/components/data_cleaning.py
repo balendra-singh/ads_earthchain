@@ -4,15 +4,14 @@ from src.components.data_ingestion import DataIngestion
 from src.exception import CustomException
 from src.logger import logging
 import pandas as pd
-import numpy as np
 
-from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
 
 
 @dataclass
 class DataCleaningConfig:
-    raw_data_path: str = os.path.join('data', 'raw', "gs_projects.csv")
+    raw_data_path: str = os.path.join(
+        'data', 'raw', "gs_certified_projects.csv")
     cleaned_data_path: str = os.path.join('data', 'staging', "data.csv")
     train_data_path: str = os.path.join('data', 'staging', "train.csv")
     test_data_path: str = os.path.join('data', 'staging', "test.csv")
@@ -33,8 +32,10 @@ class DataCleaning:
             # Parsing date-time columns
             df['created_at'] = pd.to_datetime(df['created_at'])
             df['updated_at'] = pd.to_datetime(df['updated_at'])
-            df['crediting_period_start_date'] = pd.to_datetime(df['crediting_period_start_date'])
-            df['crediting_period_end_date'] = pd.to_datetime(df['crediting_period_end_date'])
+            df['crediting_period_start_date'] = pd.to_datetime(
+                df['crediting_period_start_date'])
+            df['crediting_period_end_date'] = pd.to_datetime(
+                df['crediting_period_end_date'])
 
             # Adding False for Goal columns NaN values
             goal_cols = df.filter(like='Goal_').columns
@@ -49,6 +50,10 @@ class DataCleaning:
                             'Microscale': 'Micro Scale', 'Large scale': 'Large Scale'}
             df = df.replace({'size': replace_dict})
 
+            # Handling case: If retired credits are greater than the issued ones.
+            df.loc[df['VER_retired_credits'] > df['VER_issued_credits'],
+                   'VER_retired_credits'] = df['VER_issued_credits']
+
             df.to_csv(self.cleaning_config.cleaned_data_path)
 
             logging.info("Data cleaning is completed")
@@ -62,11 +67,3 @@ class DataCleaning:
         return {'id': 'Int64', 'estimated_annual_credits': 'Int64', 'poa_project_id': 'Int64',
                 'poa_project_sustaincert_id': 'Int64', 'latitude': 'float', 'longitude': 'float',
                 'VER_retired_credits': 'float', 'VER_issued_credits': 'float'}
-
-
-if __name__ == "__main__":
-    #data_injestion = DataIngestion()
-    #data_injestion.initiate_data_ingestion()
-
-    data_cleaning = DataCleaning()
-    data_cleaning.initiate_data_cleaning()

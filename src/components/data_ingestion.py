@@ -11,7 +11,8 @@ from src.components.gs_api import GSAPI
 @dataclass
 class DataIngestionConfig:
     api_hostname: str = "api.goldstandard.org"
-    raw_data_path: str = os.path.join('data', 'raw', "gs_projects.csv")
+    raw_data_path: str = os.path.join(
+        'data', 'raw', "gs_certified_projects.csv")
 
 
 class DataIngestion:
@@ -23,7 +24,8 @@ class DataIngestion:
         try:
 
             api_obj = GSAPI()
-            gs_project_data = api_obj.scrape_gold_standard_api()
+            gs_project_data = api_obj.scrape_gold_standard_api(
+                gs_certified_projects=True)
             df = pd.DataFrame(gs_project_data)
 
             df = api_obj.scrape_credit_api(df)
@@ -54,6 +56,3 @@ class DataIngestion:
                 project_df.at[index, col_name] = True
 
         return project_df
-    
-
-

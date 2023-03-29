@@ -21,14 +21,20 @@ class GSAPI:
         self.payload = ''
         self.headers = {'Content-Type': 'application/json'}
 
-    def scrape_gold_standard_api(self):
+    def scrape_gold_standard_api(self, gs_certified_projects=False):
         try:
             gs_certified_project_list = []
             page_counter = 1
 
             while (True):
-                self.conn.request("GET", f"/projects?size=150&page={page_counter}&gsCertified=true", self.payload,
-                                  self.headers)
+
+                if (gs_certified_projects):
+                    self.conn.request("GET", f"/projects?size=150&page={page_counter}&gsCertified=true", self.payload,
+                                      self.headers)
+                else:
+                    self.conn.request("GET", f"/projects?size=150&page={page_counter}", self.payload,
+                                      self.headers)
+
                 res = self.conn.getresponse()
                 response_json = json.loads(res.read().decode())
 
@@ -66,7 +72,7 @@ class GSAPI:
 
             logging.info(
                 f"Credits data for Gold Standard certified projects has been scraped from API")
-                
+
             return project_df
 
         except Exception as e:
