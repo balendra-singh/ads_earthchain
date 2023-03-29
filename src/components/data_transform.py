@@ -15,7 +15,7 @@ from dataclasses import dataclass
 @dataclass
 class DataTransformConfig:
     cleaned_data_path: str = os.path.join('data', 'staging', "data.csv")
-    transform_data_path: str = os.path.join('data', 'transformed', "data_transform.csv")
+    transform_data_path: str = os.path.join('data', 'transformed', "transform.csv")
     train_data_path: str = os.path.join('data', 'staging', "train.csv")
     test_data_path: str = os.path.join('data', 'staging', "test.csv")
 
