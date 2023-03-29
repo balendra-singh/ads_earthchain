@@ -53,3 +53,22 @@ def evaluate_models(X_train, y_train, X_test, y_test, models, param):
 
     except Exception as e:
         raise CustomException(e, sys)
+
+
+def read_file_with_custom_data_types(file_path):
+
+    col_datatypes = {'id': 'Int64', 'estimated_annual_credits': 'Int64', 'poa_project_id': 'Int64',
+                     'poa_project_sustaincert_id': 'Int64', 'latitude': 'float', 'longitude': 'float',
+                     'VER_retired_credits': 'float', 'VER_issued_credits': 'float'}
+
+    df = pd.read_csv(file_path, dtype=col_datatypes)
+
+    # Parsing date-time columns
+    df['created_at'] = pd.to_datetime(df['created_at'])
+    df['updated_at'] = pd.to_datetime(df['updated_at'])
+    df['crediting_period_start_date'] = pd.to_datetime(
+        df['crediting_period_start_date'])
+    df['crediting_period_end_date'] = pd.to_datetime(
+        df['crediting_period_end_date'])
+
+    return df
