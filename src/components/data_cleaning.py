@@ -14,9 +14,6 @@ class DataCleaningConfig:
     raw_data_path: str = os.path.join(
         'data', 'raw', "gs_certified_projects.csv")
     cleaned_data_path: str = os.path.join('data', 'staging', "data.csv")
-    train_data_path: str = os.path.join('data', 'staging', "train.csv")
-    test_data_path: str = os.path.join('data', 'staging', "test.csv")
-
 
 class DataCleaning:
     def __init__(self):
@@ -38,13 +35,19 @@ class DataCleaning:
             df.VER_retired_credits.fillna(0, inplace=True)
 
             # Dropping columns
-            df.drop('status',axis=1,inplace=True)
-            df.drop('state',axis=1,inplace=True)
+            df.drop('status', axis=1, inplace=True)
+            df.drop('state', axis=1, inplace=True)
 
             # Replacing categorical typos
             replace_dict = {'Micro scale': 'Micro Scale',
                             'Microscale': 'Micro Scale', 'Large scale': 'Large Scale'}
             df = df.replace({'size': replace_dict})
+
+            # Replacing Unknown or inter-national waters country codes
+            # Name changed from East Timor (TP, TMP, 626) to Timor-Leste (TL, TLS, 626)
+            # XZ -> Inter-national waters
+            country_dict = {'XZ': 'US', 'TL': 'TP'}
+            df = df.replace({'country_code': country_dict})
 
             # Handling case: If retired credits are greater than the issued ones.
             df.loc[df['VER_retired_credits'] > df['VER_issued_credits'],
