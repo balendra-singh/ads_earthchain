@@ -1,6 +1,12 @@
 import os
 import sys
 from src import utils
+
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder,StandardScaler
+
 from src.components.data_cleaning import DataCleaning
 from src.components.data_ingestion import DataIngestion
 from src.exception import CustomException
@@ -9,7 +15,6 @@ import pandas as pd
 import numpy as np
 import pycountry_convert as pycountry
 
-from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
 
 
@@ -18,9 +23,6 @@ class DataTransformationConfig:
     cleaned_data_path: str = os.path.join('data', 'staging', "data.csv")
     transform_data_path: str = os.path.join(
         'data', 'transformed', "transform.csv")
-    train_data_path: str = os.path.join('data', 'staging', "train.csv")
-    test_data_path: str = os.path.join('data', 'staging', "test.csv")
-
 
 class DataTransformation:
     def __init__(self):
@@ -36,6 +38,13 @@ class DataTransformation:
             df.to_csv(self.transform_config.transform_data_path,
                       index=False, header=True)
 
+            preprocessing_obj= self.get_data_transformer_object()
+
+            encoded_df = preprocessing_obj.fit_transform(df)
+            
+
+            
+            
             logging.info("Data transformation is completed")
             print("Data transformation is completed")
             
@@ -63,7 +72,47 @@ class DataTransformation:
             return 0
 
         return (numerator/denominator) * 100
+    
+    def get_data_transformer_object(self):
+         try:
+                numerical_columns = ["VER_sold_percentage_per_day"]
+                categorical_columns = [
+                    "continent_code",
+                    "size",
+                    "type",
+                ]
 
+                num_pipeline= Pipeline(
+                    steps=[
+                    # ("imputer",SimpleImputer(strategy="median")),
+                    ("scaler",StandardScaler())
+                    ]
+                )
+
+                cat_pipeline=Pipeline(
+                    steps=[
+                    # ("imputer",SimpleImputer(strategy="most_frequent")),
+                    ("one_hot_encoder",OneHotEncoder()),
+                    ("scaler",StandardScaler(with_mean=False))
+                    ]
+                )
+
+                logging.info(f"Categorical columns: {categorical_columns}")
+                logging.info(f"Numerical columns: {numerical_columns}")
+
+                preprocessor=ColumnTransformer(
+                    [
+                    ("num_pipeline",num_pipeline,numerical_columns),
+                    ("cat_pipelines",cat_pipeline,categorical_columns)
+                    ],
+                )
+
+                preprocessor.set_output(transform="pandas")
+
+                return preprocessor
+            
+         except Exception as e:
+            raise CustomException(e,sys)
 
 if __name__ == "__main__":
 

@@ -4,7 +4,7 @@ seaborn
 matplotlib
 scikit-learn
 pycountry_convert
-catboost
-xgboost
 dill
+scikit-fuzzy
+ipynb
 -e .
