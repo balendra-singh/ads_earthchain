@@ -53,6 +53,6 @@ class DataIngestion:
 
             for i, r1 in details_df.iterrows():
                 col_name = r1['name'].split(':')[0].replace(' ', '_')
-                project_df.at[index, col_name] = True
+                project_df.at[index, col_name] = int(1)
 
         return project_df

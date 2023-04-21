@@ -28,7 +28,9 @@ class DataCleaning:
 
             # Adding False for Goal columns NaN values
             goal_cols = df.filter(like='Goal_').columns
-            df[goal_cols] = df[goal_cols].fillna(False)
+            df[goal_cols] = df[goal_cols].fillna(0)
+            df[goal_cols] = df[goal_cols].astype(int)
+
 
             # Filling NaN with zero for credits
             df.VER_issued_credits.fillna(0, inplace=True)
