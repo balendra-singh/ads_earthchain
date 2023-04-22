@@ -10,7 +10,7 @@ from dataclasses import dataclass
 
 @dataclass
 class GSAPIConfig:
-    api_hostname: str = "api.goldstandard.org"
+    api_hostname: str = "public-api.goldstandard.org"
 
 
 class GSAPI:

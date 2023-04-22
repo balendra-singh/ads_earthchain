@@ -10,7 +10,6 @@ from src.components.gs_api import GSAPI
 
 @dataclass
 class DataIngestionConfig:
-    api_hostname: str = "api.goldstandard.org"
     raw_data_path: str = os.path.join(
         'data', 'raw', "gs_certified_projects.csv")
 
