@@ -39,6 +39,7 @@ class DataCleaning:
             # Dropping columns
             df.drop('status', axis=1, inplace=True)
             df.drop('state', axis=1, inplace=True)
+            df.drop('sustainable_development_goals', axis=1, inplace=True)
 
             # Replacing categorical typos
             replace_dict = {'Micro scale': 'Micro Scale',

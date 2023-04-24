@@ -116,8 +116,8 @@ class DataTransformation:
 
 if __name__ == "__main__":
 
-    data_injestion = DataIngestion()
-    data_injestion.initiate_data_ingestion()
+    #data_injestion = DataIngestion()
+    #data_injestion.initiate_data_ingestion()
 
     data_cleaning = DataCleaning()
     data_cleaning.initiate_data_cleaning()
