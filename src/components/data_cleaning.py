@@ -15,6 +15,7 @@ class DataCleaningConfig:
         'data', 'raw', "gs_certified_projects.csv")
     cleaned_data_path: str = os.path.join('data', 'staging', "data.csv")
 
+
 class DataCleaning:
     def __init__(self):
         self.cleaning_config = DataCleaningConfig()
@@ -31,7 +32,6 @@ class DataCleaning:
             df[goal_cols] = df[goal_cols].fillna(0)
             df[goal_cols] = df[goal_cols].astype(int)
 
-
             # Filling NaN with zero for credits
             df.VER_issued_credits.fillna(0, inplace=True)
             df.VER_retired_credits.fillna(0, inplace=True)
@@ -40,6 +40,9 @@ class DataCleaning:
             df.drop('status', axis=1, inplace=True)
             df.drop('state', axis=1, inplace=True)
             df.drop('sustainable_development_goals', axis=1, inplace=True)
+
+            # Dropping NaN valued methodoloy rows
+            df.dropna(subset=['methodology'], how='all', inplace=True)
 
             # Replacing categorical typos
             replace_dict = {'Micro scale': 'Micro Scale',
