@@ -1,5 +1,22 @@
 # `Applying Data Science - Scoring System Project`
 
+```sh
++---artifacts
++---data
+    +---predictions
+    +---raw
+    +---staging
+    +---transformed
++---models
++---notebooks
++---reports
++---scripts
++---src
+    +---components
+    +---pipeline
+
+```
+
 > Project for - [`EarthChain`](https://earthchain.co.uk)  
 > Run the following commands for project setup
 
